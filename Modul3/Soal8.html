@@ -1,0 +1,94 @@
+<html>
+    <head>
+        <title>Form</title>
+    </head>
+    <body>
+        <table border="2" cellpadding="5">
+            <tr bgcolor="skyblue" align="center">
+                <td height="150" width="550">
+                    <font face="tnr" font size=6.5 color="red"><b>Pendaftaran Kursus</b></font>
+                </td>
+            </tr>
+            <tr height ="320" bgcolor="grey" align="left">
+                <td>
+                    <table bgcolor="grey" height="200" width="550">
+                        <tr>
+                            <font size="5"><b>Data Diri</b></font>
+                            <br>
+                            <br>
+                        </tr>
+                        <tr>
+                            <td>Nama</td>
+                            <td><input type="text" name="nama"></td>
+                        </tr>
+                        <tr>
+                            <td>Nim</td>
+                            <td><input type="text" name="nim" maxlength="13"></td>
+                        </tr>
+                        <tr>
+                            <td>E-mail</td>
+                            <td><input type="text" name="email"></td>
+                        </tr>
+                        <tr>
+                            <td>Tanggal Lahir</td>
+                            <td><input type="date" name="tanggalLahir"></td>
+                        </tr>
+                        <tr>
+                            <td>Jenis Kelamin</td>
+                            <td>
+                                <input type="radio" name="jenis_kelamin" value="L">Laki-laki
+                                <br>
+                                <input type="radio" name="jenis_kelamin" value="P">Perempuan
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Pilih Program Kursus</td>
+                            <td>
+                                <input type="checkbox" name="program1" value="c#"> C#
+                                <br>
+                                <input type="checkbox" name="program2" value="java"> Java
+                                <br>
+                                <input type="checkbox" name="program3" value="sql"> SQL
+                                <br>
+                                <input type="checkbox" name="program4" value="html_dan_php"> HTML dan PHP
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Pilihan Hari/Jam Kursus</td>
+                            <td>
+                                <select name="jadwal_kursus">
+                                    <option>Senin - Rabu/09.00 - 11.00</option>
+                                    <option>Selasa - Kamis/13.00 - 15.00</option>
+                                    <option>Jumat - Sabtu/08.00 - 10.00</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr bgcolor="salmon" align="left">
+                <td>
+                    <table>
+                        <tr>
+                            <td><font>Komentar anda</font></td><font>
+                        </tr>
+                        <tr>
+                            <td>
+                                 <textarea name="komentar" cols="60" rows="5"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="reset" value="Reset">
+                                <input type="submit" value="Submit">
+                                <input type="button" value="Cancel">                               
+                            </td>
+                            <br>
+                            <br>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
