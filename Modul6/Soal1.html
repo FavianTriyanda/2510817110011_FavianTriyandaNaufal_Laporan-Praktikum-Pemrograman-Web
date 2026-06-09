@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JPhotography</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Montserrat', sans-serif;
+      background: #fff;
+      color: #111;
+    }
+
+    .page-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .corner { position: fixed; width: 18px; height: 18px; z-index: 999; pointer-events: none; }
+    .corner-tl { top: 8px;  left: 8px;  border-top: 2px solid #111; border-left: 2px solid #111; }
+    .corner-tr { top: 8px;  right: 8px; border-top: 2px solid #111; border-right: 2px solid #111; }
+    .corner-bl { bottom: 8px; left: 8px;  border-bottom: 2px solid #111; border-left: 2px solid #111; }
+    .corner-br { bottom: 8px; right: 8px; border-bottom: 2px solid #111; border-right: 2px solid #111; }
+
+    .gallery-wrapper {
+      flex: 1 1 0;
+      margin: 10px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gallery-wrapper .gc {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .gallery-wrapper .gc-tl { top: 0;  left: 0;  border-top: 2px solid #111; border-left: 2px solid #111; }
+    .gallery-wrapper .gc-tr { top: 0;  right: 0; border-top: 2px solid #111; border-right: 2px solid #111; }
+    .gallery-wrapper .gc-bl { bottom: 0; left: 0;  border-bottom: 2px solid #111; border-left: 2px solid #111; }
+    .gallery-wrapper .gc-br { bottom: 0; right: 0; border-bottom: 2px solid #111; border-right: 2px solid #111; }
+
+    .navbar {
+      flex-shrink: 0;
+      padding: 8px 24px;
+      border-bottom: 1px solid #e0e0e0;
+      background: #fff;
+    }
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #111 !important;
+    }
+    .nav-link {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #777 !important;
+      padding: 4px 10px !important;
+    }
+    .nav-link.active-link {
+      border: 1px solid #111;
+      border-radius: 2px;
+      color: #111 !important;
+    }
+
+    .hero {
+      flex-shrink: 0;
+      text-align: center;
+      padding: 12px 20px 8px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(0.9rem, 1.6vw, 1.3rem);
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 5px;
+    }
+    .hero .subtitle {
+      font-size: 0.52rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #999;
+    }
+
+    .filter-bar {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px 0;
+    }
+    .filter-btn {
+      background: none;
+      border: none;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      color: #aaa;
+      padding: 2px 12px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: color .2s, background .2s;
+    }
+    .filter-btn.active { background: #111; color: #fff; }
+    .filter-btn:hover { color: #111; }
+
+    .gallery-grid {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      overflow: hidden;
+    }
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(15%);
+      transition: transform .4s ease, filter .4s ease;
+    }
+    .gallery-item:hover img {
+      transform: scale(1.06);
+      filter: grayscale(0%);
+    }
+    .gallery-item .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.42);
+      opacity: 0;
+      transition: opacity .3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gallery-item:hover .overlay { opacity: 1; }
+    .overlay-icon { color: #fff; font-size: 1.3rem; }
+
+    .gallery-item.hidden { visibility: hidden; }
+
+    footer {
+      flex-shrink: 0;
+      text-align: center;
+      padding: 8px 20px 10px;
+      border-top: 1px solid #e0e0e0;
+    }
+    footer .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1px;
+    }
+    footer .copy {
+      font-size: 0.55rem;
+      color: #999;
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+    footer .social-links { display: flex; justify-content: center; gap: 14px; }
+    footer .social-links a { color: #666; font-size: 0.85rem; text-decoration: none; transition: color .2s; }
+    footer .social-links a:hover { color: #111; }
+  </style>
+</head>
+<body>
+
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <div class="page-wrapper">
+
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid px-0">
+        <a class="navbar-brand" href="#">JPhotography</a>
+        <div class="navbar-nav flex-row gap-1 ms-auto">
+          <a class="nav-link active-link" href="#">Home</a>
+          <a class="nav-link" href="#">About Me</a>
+          <a class="nav-link" href="#">Portfolio</a>
+          <a class="nav-link" href="#">Contact</a>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <h1>Hi, Hello.. I Am JohnDas...!<br>I Travel Around The World To Get The Best Photos.!</h1>
+      <p class="subtitle">Award Winning Photographer &nbsp;/&nbsp; Cinematographer &nbsp;/&nbsp; Writer</p>
+    </section>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterGallery('all', this)">All</button>
+      <button class="filter-btn" onclick="filterGallery('landscape', this)">Landscape</button>
+      <button class="filter-btn" onclick="filterGallery('portrait', this)">Portrait</button>
+      <button class="filter-btn" onclick="filterGallery('product', this)">Product</button>
+    </div>
+
+    <div class="gallery-wrapper">
+      <div class="gc gc-tl"></div>
+      <div class="gc gc-tr"></div>
+      <div class="gc gc-bl"></div>
+      <div class="gc gc-br"></div>
+
+      <div class="gallery-grid" id="gallery">
+      <div class="gallery-item" data-cat="portrait">
+        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="portrait">
+        <img src="https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="landscape">
+        <img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="portrait">
+        <img src="https://images.unsplash.com/photo-1521119989659-a83eee488004?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="portrait">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="portrait">
+        <img src="https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="portrait">
+        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="landscape">
+        <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="product">
+        <img src="https://images.unsplash.com/photo-1452780212940-6f5c0d14d848?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="product">
+        <img src="https://images.unsplash.com/photo-1512790182412-b19e6d62bc39?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="landscape">
+        <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="portrait">
+        <img src="https://images.unsplash.com/photo-1504703395950-b89145a5425b?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="portrait">
+        <img src="https://images.unsplash.com/photo-1463453091185-61582044d556?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="landscape">
+        <img src="https://images.unsplash.com/photo-1468276311594-df7cb65d8df6?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="portrait">
+        <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+      <div class="gallery-item" data-cat="landscape">
+        <img src="https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=400&q=80" alt=""/>
+        <div class="overlay"><i class="bi bi-zoom-in overlay-icon"></i></div>
+      </div>
+    </div>
+    </div>
+    <footer>
+      <div class="brand-name">JPhotography</div>
+      <p class="copy">© Copyrights 2019. All Rights Reserved</p>
+      <div class="social-links">
+        <a href="#"><i class="bi bi-camera"></i></a>
+        <a href="#"><i class="bi bi-behance"></i></a>
+        <a href="#"><i class="bi bi-instagram"></i></a>
+        <a href="#"><i class="bi bi-dribbble"></i></a>
+        <a href="#"><i class="bi bi-linkedin"></i></a>
+        <a href="#"><i class="bi bi-twitter-x"></i></a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function filterGallery(cat, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.gallery-item').forEach(item => {
+        if (cat === 'all' || item.dataset.cat === cat) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
